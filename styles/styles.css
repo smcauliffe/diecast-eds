@@ -48,7 +48,8 @@
   --spacing-xl: 3rem;
   --radius: 8px;
 
-  /* nav height */
+  /* layout */
+  --max-width: 1200px;
   --nav-height: 64px;
 }
 
@@ -229,7 +230,7 @@ main > .section {
 }
 
 main > .section > div {
-  max-width: 1200px;
+  max-width: var(--max-width);
   margin: auto;
   padding: var(--spacing-xl) var(--spacing-lg);
 }
@@ -300,7 +301,12 @@ main .section > div > p:not(:first-child, :has(picture)) {
 
 /* Pages with cards block keep full width */
 main .section:has(.cards) > div {
-  max-width: 1200px;
+  max-width: var(--max-width);
+}
+
+/* Page title before cards - tighter spacing to match CS site */
+main .section:has(.cards) h2 {
+  margin: 0 0 var(--spacing-lg) 0;
 }
 
 /* Detail pages (no cards) have narrower content for readability */

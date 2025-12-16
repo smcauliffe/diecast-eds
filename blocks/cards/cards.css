@@ -45,6 +45,13 @@
 /* Card title */
 .cards .cards-card-body p:first-child {
   margin: 0 0 var(--spacing-sm) 0;
+  text-align: left;
+}
+
+/* Reset button-container that EDS auto-applies */
+.cards .cards-card-body .button-container {
+  margin: 0;
+  text-align: left;
 }
 
 .cards .cards-card-body p:first-child strong {
@@ -53,10 +60,24 @@
 }
 
 .cards .cards-card-body p:first-child a {
+  /* Reset button styles that EDS auto-applies */
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
   color: var(--text-color);
+  text-align: left;
+  text-overflow: clip;
+  white-space: normal;
+  overflow: visible;
+  font-weight: inherit;
+  line-height: inherit;
 }
 
 .cards .cards-card-body p:first-child a:hover {
+  background: none;
   color: var(--primary-color);
 }
 
