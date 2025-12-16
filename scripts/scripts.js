@@ -75,6 +75,39 @@ function buildAutoBlocks(main) {
 }
 
 /**
+ * Decorates car detail page - moves back link, styles meta with badge.
+ * @param {Element} main The main element
+ */
+function decorateCarDetail(main) {
+  if (!window.location.pathname.startsWith('/cars/')) return;
+
+  // Move back link above the hero
+  const backLink = main.querySelector('a[href="/"]');
+  const heroWrapper = main.querySelector('.hero-wrapper');
+  if (backLink && heroWrapper) {
+    const backParagraph = backLink.closest('p');
+    if (backParagraph) {
+      backParagraph.classList.add('back-link');
+      heroWrapper.insertBefore(backParagraph, heroWrapper.firstChild);
+    }
+  }
+
+  // Style meta paragraph (contains "Brand · Year" format) with badge
+  const paragraphs = main.querySelectorAll('p');
+  paragraphs.forEach((p) => {
+    const text = p.textContent.trim();
+    if (text.includes('·') && !p.querySelector('a') && !p.querySelector('picture')) {
+      const parts = text.split('·').map((s) => s.trim());
+      if (parts.length === 2) {
+        const [brand, year] = parts;
+        p.innerHTML = `<span class="brand-badge">${brand}</span><span>Year: ${year}</span>`;
+        p.classList.add('car-detail-meta');
+      }
+    }
+  });
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -86,6 +119,7 @@ export function decorateMain(main) {
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
+  decorateCarDetail(main);
 }
 
 /**
