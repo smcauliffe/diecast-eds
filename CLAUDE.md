@@ -171,9 +171,9 @@ See `content-models.md` for detailed authoring instructions including:
 - [x] Switch to system fonts (removed Roboto)
 
 ### Phase 4: Testing
-- [ ] Run Lighthouse tests
-- [ ] Compare scores with Next.js baseline
-- [ ] Document findings
+- [x] Run Lighthouse tests
+- [x] Compare scores with Next.js baseline
+- [x] Document findings
 
 ---
 
@@ -241,6 +241,11 @@ header nav .nav-tools {
 ```
 Empty out `fonts.css` to skip font loading entirely.
 
+### 10. EDS Blocks Indexing by Default
+**Issue:** SEO Lighthouse score is 61 instead of 100
+**Cause:** EDS preview (`.aem.page`) and live (`.aem.live`) sites return `X-Robots-Tag: noindex` header by default to prevent search engines from indexing non-production content.
+**Solution:** This is intentional behavior. For production sites with custom domains, configure proper indexing. For comparison purposes, this is a known difference - Vercel doesn't block indexing by default.
+
 ---
 
 ## Key Learnings
@@ -287,27 +292,38 @@ The `color-scheme: dark` declaration helps browser UI elements (scrollbars, form
 
 ## Lighthouse Scores (EDS)
 
-*(To be measured after deployment)*
+Tested via [PageSpeed Insights](https://pagespeed.web.dev/) on Mobile.
 
 | Page | Performance | Accessibility | Best Practices | SEO |
 |------|-------------|---------------|----------------|-----|
-| Home | - | - | - | - |
-| Car Detail | - | - | - | - |
+| Home | 99 | 95 | 96 | 61 |
+| Car Detail | 99 | 100 | 96 | 69 |
+
+**Reports:**
+- [Home page](https://pagespeed.web.dev/analysis/https-main--diecast-eds--smcauliffe-aem-live/xiviivkeur?form_factor=mobile)
+- Car Detail page tested at `/cars/beatnik-bandit-1971`
+
+**Notes:**
+- SEO score is significantly lower (61 vs 100) because EDS preview/live sites block indexing by default via `X-Robots-Tag: noindex`. This is intentional for non-production sites.
+- Best Practices score (96 vs 100) is due to console errors from missing images (expected - images not yet uploaded to DA.live).
 
 ---
 
 ## Comparison Summary
 
-*(Lighthouse scores to be completed after deployment)*
+| Aspect | Next.js + Contentstack | EDS + Document Authoring |
+|--------|------------------------|--------------------------|
+| **Performance (Home)** | 99-100 | 99 |
+| **Performance (Detail)** | 99-100 | 99 |
+| **Accessibility** | 95 | 95-100 |
+| **Best Practices** | 100 | 96* |
+| **SEO** | 100 | 61-69** |
+
+*\*Best Practices reduced due to console errors from missing images (not yet uploaded)*
+*\*\*SEO reduced because EDS blocks indexing by default on `.aem.page`/`.aem.live` domains*
 
 | Aspect | Next.js + Contentstack | EDS + Document Authoring |
 |--------|------------------------|--------------------------|
-| **Performance (Home)** | 100 | - |
-| **Performance (Detail)** | 100 | - |
-| **Accessibility** | 95 | - |
-| **Best Practices** | 100 | - |
-| **SEO** | 100 | - |
-| | |
 | **Build Step** | Required (`npm run build`) | None (direct publishing) |
 | **Environment Variables** | 3 required (API keys) | None |
 | **Content Authoring** | Contentstack CMS UI | DA.live / Google Docs / Word |
