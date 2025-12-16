@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "WebFetch(domain:main--diecast-eds--smcauliffe.aem.page)",
+      "WebFetch(domain:www.aem.live)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)",
+      "WebFetch(domain:github.com)"
+    ]
+  }
+}
