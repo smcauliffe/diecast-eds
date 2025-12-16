@@ -9,6 +9,7 @@
 }
 
 .cards > ul > li {
+  position: relative;
   background-color: var(--light-color);
   border-radius: var(--radius);
   overflow: hidden;
@@ -79,6 +80,13 @@
 .cards .cards-card-body p:first-child a:hover {
   background: none;
   color: var(--primary-color);
+}
+
+/* Make entire card clickable */
+.cards .cards-card-body p:first-child a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
 }
 
 /* Card meta (brand · year) */

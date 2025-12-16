@@ -267,10 +267,24 @@ main .section h1 {
   margin: 0 0 var(--spacing-md) 0;
 }
 
-/* Meta line (brand · year) after h1 */
-main .section h1 + p {
+/* Meta line (brand · year) on detail pages */
+.car-detail-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
   color: var(--text-muted);
   margin: 0 0 var(--spacing-lg) 0;
+}
+
+/* Brand badge (shared style) */
+.brand-badge {
+  display: inline-block;
+  background: var(--primary-color);
+  color: white;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
 /* Hero image on detail pages */
