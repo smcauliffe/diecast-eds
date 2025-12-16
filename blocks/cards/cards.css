@@ -62,7 +62,20 @@
 
 /* Card meta (brand · year) */
 .cards .cards-card-body p:last-child {
+  display: flex;
+  gap: var(--spacing-md);
   margin: 0;
   font-size: var(--body-font-size-xs);
   color: var(--text-muted);
+}
+
+/* Brand badge */
+.cards .brand-badge {
+  display: inline-block;
+  background: var(--primary-color);
+  color: white;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
 }
