@@ -70,24 +70,32 @@ DA.live (Document Authoring) is Adobe's web-based content editor for Edge Delive
 2. Preview changes at https://main--diecast-eds--smcauliffe.aem.page/
 3. Publish to live at https://main--diecast-eds--smcauliffe.aem.live/
 
-### Project Structure (EDS Boilerplate)
+### Project Structure
 ```
 diecast-eds/
-├── CLAUDE.md                 # This file
+├── CLAUDE.md                 # This file - project documentation
+├── content-models.md         # Content authoring instructions
+├── import/                   # HTML files for DA.live import
+│   ├── nav.html
+│   ├── index.html
+│   └── cars/
+│       ├── beatnik-bandit-1971.html
+│       ├── matchbox-mustang-1970.html
+│       └── corvette-stingray-1976.html
 ├── blocks/                   # Custom blocks (components)
-│   ├── cards/
+│   ├── cards/               # Car grid block (customized)
 │   ├── columns/
 │   ├── footer/
 │   ├── fragment/
-│   ├── header/
+│   ├── header/              # Simplified header (customized)
 │   └── hero/
 ├── scripts/
-│   ├── aem.js               # Core EDS library
+│   ├── aem.js               # Core EDS library (don't modify)
 │   ├── scripts.js           # Site-specific JS
 │   └── delayed.js           # Deferred loading
 ├── styles/
-│   ├── styles.css           # Main styles
-│   ├── fonts.css            # Font definitions
+│   ├── styles.css           # Main styles (customized)
+│   ├── fonts.css            # Empty (using system fonts)
 │   └── lazy-styles.css      # Deferred styles
 ├── head.html                # Custom <head> content
 ├── 404.html                 # Error page
@@ -171,7 +179,109 @@ See `content-models.md` for detailed authoring instructions including:
 
 ## Issues Encountered & Solutions
 
-*(To be documented as we build)*
+### 1. GitHub Deploy Key Limitation
+**Issue:** Could not push to repository - "Permission denied to deploy key"
+**Cause:** The SSH key was already used as a deploy key on another repository (diecast-cstask). GitHub does not allow the same SSH key to be used as a deploy key on multiple repositories.
+**Solution:** Instead of adding the key as a repository-specific deploy key, add it to your GitHub account settings (https://github.com/settings/keys). Account-level SSH keys work across all repositories the account has access to.
+
+### 2. GitHub HTTPS vs SSH Authentication
+**Issue:** `git push` failed with "Permission denied to seanathero" when the repo belonged to smcauliffe
+**Cause:** HTTPS remote URL was using cached credentials for the wrong GitHub account
+**Solution:** Switch to SSH remote with a host alias configured in `~/.ssh/config`:
+```bash
+git remote set-url origin git@github-smcauliffe:smcauliffe/diecast-eds.git
+```
+The SSH config uses `IdentityFile` to specify which key to use for which GitHub account.
+
+### 3. DA.live HTML Import
+**Discovery:** Instead of manually creating content in DA.live's visual editor, you can import HTML files directly. This is much faster for initial content setup.
+**How:** Create semantic HTML files with the expected EDS structure (blocks as `<div class="blockname">`) and import them via DA.live's import feature.
+**Files created:** `import/nav.html`, `import/index.html`, `import/cars/*.html`
+
+### 4. CSS Lint: Selector Specificity Order
+**Issue:** Stylelint error "Expected selector X to come before selector Y" (no-descending-specificity)
+**Cause:** CSS selectors with lower specificity appeared after selectors with higher specificity that targeted overlapping elements
+**Solution:** Reorder selectors so that more general selectors come before more specific ones. For example, `main .section h1 + p` must come before `main .section > div > p:has(picture)`.
+
+### 5. CSS Lint: Color Function Notation
+**Issue:** Stylelint errors about color notation (`rgba` vs `rgb`, `0.1` vs `10%`)
+**Cause:** Stylelint enforces modern CSS color function notation
+**Solution:** Use `rgb(0 0 0 / 10%)` instead of `rgba(0, 0, 0, 0.1)`. Run `npm run lint:css -- --fix` to auto-fix most issues.
+
+### 6. CSS Lint: Complex :not() Notation
+**Issue:** Stylelint error "Expected complex :not() pseudo-class notation"
+**Cause:** Using multiple `:not()` selectors instead of combining them
+**Solution:** Use `:not(:first-child, :has(picture))` instead of `:not(:first-child):not(:has(picture))`
+
+### 7. Conditional Page Styling Without Classes
+**Issue:** Need different `max-width` for home page (1200px with cards grid) vs detail pages (800px for readability)
+**Cause:** EDS doesn't automatically add page-type classes to distinguish pages
+**Solution:** Use CSS `:has()` selector to detect content:
+```css
+main .section:has(.cards) > div { max-width: 1200px; }
+main .section:not(:has(.cards)) > div { max-width: 800px; }
+```
+
+### 8. Header Block Complexity
+**Issue:** Default EDS header block has hamburger menu, nav sections, and complex responsive behavior - overkill for a simple site
+**Solution:** Keep the header.js as-is (it handles loading the nav fragment), but override the CSS to hide unnecessary elements and simplify the layout:
+```css
+header nav .nav-hamburger,
+header nav .nav-sections,
+header nav .nav-tools {
+  display: none;
+}
+```
+
+### 9. Font Loading Performance
+**Issue:** EDS boilerplate loads Roboto font files, adding extra HTTP requests
+**Solution:** Switch to system font stack for better performance:
+```css
+--body-font-family: system-ui, -apple-system, blinkmacsystemfont, 'Segoe UI', roboto, sans-serif;
+```
+Empty out `fonts.css` to skip font loading entirely.
+
+---
+
+## Key Learnings
+
+### Content-Driven Development (CDD)
+Adobe's recommended approach for EDS development:
+1. **Design content model first** — How will authors structure content in tables?
+2. **Create test content** — Real content must exist before writing code
+3. **Then build blocks** — Transform the HTML that EDS generates from documents
+
+This is the opposite of traditional development where you build components first and then figure out content later.
+
+### EDS Block Architecture
+- Blocks are defined as tables in documents with the block name in the first row
+- EDS converts tables to `<div class="blockname">` with nested `<div>` elements
+- Block JS (`blocks/blockname/blockname.js`) transforms this HTML via DOM manipulation
+- Block CSS (`blocks/blockname/blockname.css`) styles the transformed HTML
+- No React, no build step — just vanilla JS and CSS
+
+### DA.live vs Google Docs/SharePoint
+- DA.live is Adobe's own document authoring interface for EDS
+- Alternative to Google Docs or SharePoint
+- Supports HTML import for faster content setup
+- Same preview/publish workflow as other authoring options
+
+### CSS :has() Selector
+Modern CSS feature that enables parent/ancestor selection based on children. Very useful in EDS for:
+- Conditional styling based on content type
+- Detecting presence of blocks without adding classes
+- Styling wrapper elements based on their contents
+
+### Dark Mode Implementation
+Use CSS custom properties with `prefers-color-scheme` media query:
+```css
+:root { --background-color: #fff; }
+@media (prefers-color-scheme: dark) {
+  :root { --background-color: #0a0a0a; }
+  html { color-scheme: dark; }
+}
+```
+The `color-scheme: dark` declaration helps browser UI elements (scrollbars, form controls) match the dark theme.
 
 ---
 
@@ -188,12 +298,48 @@ See `content-models.md` for detailed authoring instructions including:
 
 ## Comparison Summary
 
-*(To be completed after both implementations)*
+*(Lighthouse scores to be completed after deployment)*
 
-| Metric | Next.js + Contentstack | EDS + Document Authoring |
+| Aspect | Next.js + Contentstack | EDS + Document Authoring |
 |--------|------------------------|--------------------------|
-| Performance (Home) | 100 | - |
-| Performance (Detail) | 100 | - |
-| Build complexity | npm install, env vars | - |
-| Content authoring | CMS UI | - |
-| Deployment | Vercel | - |
+| **Performance (Home)** | 100 | - |
+| **Performance (Detail)** | 100 | - |
+| **Accessibility** | 95 | - |
+| **Best Practices** | 100 | - |
+| **SEO** | 100 | - |
+| | |
+| **Build Step** | Required (`npm run build`) | None (direct publishing) |
+| **Environment Variables** | 3 required (API keys) | None |
+| **Content Authoring** | Contentstack CMS UI | DA.live / Google Docs / Word |
+| **Content Storage** | Contentstack cloud | GitHub repo (via AEM sync) |
+| **Deployment** | Vercel | Adobe CDN (automatic) |
+| **Local Development** | `npm run dev` | `aem up` |
+| **Framework** | React (Next.js) | Vanilla JS |
+| **CSS Approach** | CSS Modules or global CSS | Block-scoped CSS files |
+| **Code Complexity** | React components, API integration | DOM manipulation, CSS |
+| **Learning Curve** | React knowledge required | HTML/CSS/vanilla JS |
+
+---
+
+## Useful Resources
+
+### Adobe EDS Documentation
+- **Main docs**: https://www.aem.live/docs/
+- **Developer tutorial**: https://www.aem.live/developer/tutorial
+- **Block anatomy**: https://www.aem.live/developer/markup-sections-blocks
+- **AI coding agents guide**: https://www.aem.live/developer/ai-coding-agents
+- **Keeping it 100 (performance)**: https://www.aem.live/developer/keeping-it-100
+
+### Block References
+- **Block Collection** (Adobe-maintained): https://github.com/adobe/aem-block-collection
+- **Block Party** (community): https://github.com/adobe/block-party
+
+### Tools
+- **AEM CLI**: `npm install -g @adobe/aem-cli`
+- **AEM Sidekick**: Chrome extension for preview/publish
+- **DA.live**: https://da.live
+
+### Claude Code Skills for EDS
+Adobe provides Claude skills for EDS development:
+- https://github.com/adobe/helix-website/tree/main/.claude/skills
+- Skills include: building-blocks, content-modeling, content-driven-development, block-collection-and-party
