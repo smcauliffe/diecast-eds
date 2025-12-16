@@ -154,11 +154,13 @@ See `content-models.md` for detailed authoring instructions including:
 **Note:** HTML files for import are in `/import/` folder.
 
 ### Phase 3: Styling
-- [ ] Match header styling
-- [ ] Match car grid layout
-- [ ] Match car card styling (image, title, brand badge, year)
-- [ ] Match car detail page layout
-- [ ] Implement dark mode support
+- [x] Match header styling (simplified gray bar)
+- [x] Match car grid layout (cards block)
+- [x] Match car card styling (image, title, hover effects)
+- [x] Match car detail page layout (back link, hero image, meta)
+- [x] Implement dark mode support
+- [x] Update color palette and typography to match Next.js site
+- [x] Switch to system fonts (removed Roboto)
 
 ### Phase 4: Testing
 - [ ] Run Lighthouse tests

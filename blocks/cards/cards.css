@@ -1,27 +1,68 @@
+/* Car cards grid - matching Next.js Diecast site */
 .cards > ul {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(257px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
 }
 
 .cards > ul > li {
-  border: 1px solid #dadada;
-  background-color: var(--background-color);
+  background-color: var(--light-color);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.cards .cards-card-body {
-  margin: 16px;
+.cards > ul > li:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgb(0 0 0 / 10%);
 }
 
+/* Card image */
 .cards .cards-card-image {
   line-height: 0;
+  aspect-ratio: 4 / 3;
+  background-color: var(--light-color-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cards > ul > li img {
   width: 100%;
+  height: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
+}
+
+/* Card body */
+.cards .cards-card-body {
+  padding: var(--spacing-md);
+}
+
+/* Card title */
+.cards .cards-card-body p:first-child {
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.cards .cards-card-body p:first-child strong {
+  font-size: var(--heading-font-size-s);
+  font-weight: 600;
+}
+
+.cards .cards-card-body p:first-child a {
+  color: var(--text-color);
+}
+
+.cards .cards-card-body p:first-child a:hover {
+  color: var(--primary-color);
+}
+
+/* Card meta (brand · year) */
+.cards .cards-card-body p:last-child {
+  margin: 0;
+  font-size: var(--body-font-size-xs);
+  color: var(--text-muted);
 }

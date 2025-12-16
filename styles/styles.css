@@ -11,64 +11,65 @@
  */
 
 :root {
-  /* colors */
-  --background-color: white;
-  --light-color: #f8f8f8;
-  --dark-color: #505050;
-  --text-color: #131313;
-  --link-color: #3b63fb;
-  --link-hover-color: #1d3ecf;
+  /* colors - matching Next.js site */
+  --background-color: #fff;
+  --foreground-color: #171717;
+  --light-color: #f3f4f6;
+  --light-color-alt: #e5e7eb;
+  --dark-color: #374151;
+  --text-color: #171717;
+  --text-muted: #6b7280;
+  --link-color: inherit;
+  --link-hover-color: #dc2626;
+  --primary-color: #dc2626;
+  --primary-color-dark: #b91c1c;
 
-  /* fonts */
-  --body-font-family: roboto, roboto-fallback, sans-serif;
-  --heading-font-family: roboto-condensed, roboto-condensed-fallback, sans-serif;
+  /* fonts - system font stack like Next.js site */
+  --body-font-family: system-ui, -apple-system, blinkmacsystemfont, 'Segoe UI', roboto, sans-serif;
+  --heading-font-family: system-ui, -apple-system, blinkmacsystemfont, 'Segoe UI', roboto, sans-serif;
 
   /* body sizes */
-  --body-font-size-m: 22px;
-  --body-font-size-s: 19px;
-  --body-font-size-xs: 17px;
+  --body-font-size-m: 18px;
+  --body-font-size-s: 16px;
+  --body-font-size-xs: 14px;
 
   /* heading sizes */
-  --heading-font-size-xxl: 55px;
-  --heading-font-size-xl: 44px;
-  --heading-font-size-l: 34px;
-  --heading-font-size-m: 27px;
-  --heading-font-size-s: 24px;
-  --heading-font-size-xs: 22px;
+  --heading-font-size-xxl: 2rem;
+  --heading-font-size-xl: 1.75rem;
+  --heading-font-size-l: 1.5rem;
+  --heading-font-size-m: 1.25rem;
+  --heading-font-size-s: 1.125rem;
+  --heading-font-size-xs: 1rem;
+
+  /* spacing */
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  --radius: 8px;
 
   /* nav height */
   --nav-height: 64px;
 }
 
-/* fallback fonts */
-@font-face {
-  font-family: roboto-condensed-fallback;
-  size-adjust: 88.82%;
-  src: local('Arial');
-}
-
-@font-face {
-  font-family: roboto-fallback;
-  size-adjust: 99.529%;
-  src: local('Arial');
-}
-
-@media (width >= 900px) {
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
   :root {
-    /* body sizes */
-    --body-font-size-m: 18px;
-    --body-font-size-s: 16px;
-    --body-font-size-xs: 14px;
+    --background-color: #0a0a0a;
+    --foreground-color: #ededed;
+    --light-color: #1f1f1f;
+    --light-color-alt: #2d2d2d;
+    --text-color: #ededed;
+    --text-muted: #9ca3af;
+    --dark-color: #d1d5db;
+  }
 
-    /* heading sizes */
-    --heading-font-size-xxl: 45px;
-    --heading-font-size-xl: 36px;
-    --heading-font-size-l: 28px;
-    --heading-font-size-m: 22px;
-    --heading-font-size-s: 20px;
-    --heading-font-size-xs: 18px;
+  html {
+    color-scheme: dark;
   }
 }
+
+/* Using system fonts - no fallback definitions needed */
 
 body {
   display: none;
@@ -82,10 +83,6 @@ body {
 
 body.appear {
   display: block;
-}
-
-header {
-  height: var(--nav-height);
 }
 
 header .header,
@@ -162,7 +159,6 @@ a:any-link {
 
 a:hover {
   color: var(--link-hover-color);
-  text-decoration: underline;
 }
 
 /* buttons */
@@ -229,23 +225,13 @@ main img {
 
 /* sections */
 main > .section {
-  margin: 40px 0;
+  margin: 0;
 }
 
 main > .section > div {
   max-width: 1200px;
   margin: auto;
-  padding: 0 24px;
-}
-
-main > .section:first-of-type {
-  margin-top: 0;
-}
-
-@media (width >= 900px) {
-  main > .section > div {
-    padding: 0 32px;
-  }
+  padding: var(--spacing-xl) var(--spacing-lg);
 }
 
 /* section metadata */
@@ -254,4 +240,70 @@ main .section.highlight {
   background-color: var(--light-color);
   margin: 0;
   padding: 40px 0;
+}
+
+/* ================================
+   Car Detail Page Styles
+   ================================ */
+
+/* Back link */
+main .section > div > p:first-child a[href="/"] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-lg);
+  font-size: var(--body-font-size-xs);
+}
+
+main .section > div > p:first-child a[href="/"]:hover {
+  color: var(--primary-color);
+}
+
+/* Page title (h1) */
+main .section h1 {
+  font-size: var(--heading-font-size-xxl);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+/* Meta line (brand · year) after h1 */
+main .section h1 + p {
+  color: var(--text-muted);
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+/* Hero image on detail pages */
+main .section > div > p:has(picture) {
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+main .section > div > p:has(picture) picture {
+  display: block;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background-color: var(--light-color-alt);
+}
+
+main .section > div > p:has(picture) img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Description paragraphs */
+main .section > div > p:not(:first-child, :has(picture)) {
+  font-size: var(--heading-font-size-s);
+  line-height: 1.8;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Pages with cards block keep full width */
+main .section:has(.cards) > div {
+  max-width: 1200px;
+}
+
+/* Detail pages (no cards) have narrower content for readability */
+main .section:not(:has(.cards)) > div {
+  max-width: 800px;
 }
